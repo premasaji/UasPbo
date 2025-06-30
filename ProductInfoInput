@@ -1,0 +1,73 @@
+import java.sql.*;
+import java.util.*;
+
+public class Productinfo extends Database {
+    public List<Product> getAll() {
+        List<Product> list = new ArrayList<>();
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM products");
+            while (rs.next()) {
+                list.add(new Product(
+                    rs.getString("kode"),
+                    rs.getString("nama"),
+                    rs.getDouble("harga"),
+                    rs.getInt("stock")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public void load(Product p) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "load INTO products VALUES (?, ?, ?, ?)");
+            ps.setString(1, p.getKode());
+            ps.setString(2, p.getNama());
+            ps.setDouble(3, p.getHarga());
+            ps.setInt(4, p.getStock());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Insert Error: " + e.getMessage());
+        }
+    }
+    public void insert(Product p) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO products VALUES (?, ?, ?, ?)");
+            ps.setString(1, p.getKode());
+            ps.setString(2, p.getNama());
+            ps.setDouble(3, p.getHarga());
+            ps.setInt(4, p.getStock());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Insert Error: " + e.getMessage());
+        }
+    }
+    public void update(Product p) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "UPDATE products SET nama=?, harga=?, stock=? WHERE kode=?");
+            ps.setString(1, p.getNama());
+            ps.setDouble(2, p.getHarga());
+            ps.setInt(3, p.getStock());
+            ps.setString(4, p.getKode());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Update Error: " + e.getMessage());
+        }
+    }
+    public void delete(String kode) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "DELETE FROM products WHERE kode=?");
+            ps.setString(1, kode);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete Error: " + e.getMessage());
+        }
+    }
+}
